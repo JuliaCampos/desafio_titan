@@ -1,0 +1,77 @@
+CREATE TABLE Loja(
+cod_loja integer PRIMARY KEY AUTOINCREMENT,
+nome varchar(255),
+descricao varchar(255)
+);
+
+INSERT INTO Loja (nome, descricao) VALUES ('loja 1', 'primeira loja cadastrada');
+INSERT INTO Loja (nome, descricao) VALUES ('loja 2', 'segunda loja cadastrada');
+INSERT INTO Loja (nome, descricao) VALUES ('loja 3', 'terceira loja cadastrada');
+
+CREATE TABLE Prod(
+	cod_prod INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	descricao varchar(255)
+);
+
+SELECT * FROM Prod p;
+
+INSERT INTO Prod (descricao) VALUES (' ');
+
+CREATE TABLE Produto (
+	id_produto INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	cod_prod integer,
+	cod_loja integer,
+	desc_prod varchar(40),
+	dt_inclu_prod Date,
+	preco_prod decimal,
+	CONSTRAINT fk_LojaProduto FOREIGN KEY (cod_loja) REFERENCES Loja (cod_loja),
+	CONSTRAINT fk_Prod FOREIGN KEY (cod_prod) REFERENCES Prod (cod_prod)
+);
+
+INSERT INTO Produto (cod_prod, cod_loja,                desc_prod, dt_inclu_prod, preco_prod) 
+             VALUES (     '185',      '3', 'LEITE CONDESADO ITAMBÉ ',  '25/12/2010',    '30.40');
+
+SELECT * FROM Produto p;
+
+UPDATE Produto SET preco_prod = '95.40' WHERE cod_prod = '170' AND cod_loja = '2';
+
+SELECT * FROM Produto p WHERE cod_loja = '1' OR cod_loja = '2';
+
+SELECT min(dt_inclu_prod) dt_inclu_prod, max(dt_inclu_prod) dt_inclu_prod FROM Produto;
+SELECT min(dt_inclu_prod) dt_inclu_prod FROM Produto;
+SELECT max(dt_inclu_prod) dt_inclu_prod FROM Produto;
+
+SELECT count(id_produto) FROM Produto; 
+
+select * from Produto where desc_prod LIKE 'L%';
+
+SELECT SUM(preco_prod) AS total FROM Produto WHERE cod_loja = '2'AND preco_prod > 100.000;
+
+CREATE TABLE Estoque (
+	id_estoque INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	cod_prod integer,
+	cod_loja integer,
+	qtd_prod decimal(15.3),
+	CONSTRAINT fk_LojaProd FOREIGN KEY (cod_loja) REFERENCES Loja (cod_loja),
+	CONSTRAINT fk_Prod FOREIGN KEY (cod_prod) REFERENCES Prod (cod_prod)
+);
+
+SELECT * FROM Estoque e ;
+
+INSERT INTO Estoque (cod_prod, cod_loja, qtd_prod ) 
+             VALUES ('185',         '2',       '20' );
+
+-- Montar um unico select para trazer os seguintes campos: 
+--o código da loja do produto, a descrição da loja, código do produto, 
+--a descrição do produto, o preço do produto, a quantidade em estoque do produto. 
+--Considere  que o código da loja para esta consulta seja igual a 1
+            
+SELECT Loja.cod_loja, Loja.descricao, 
+       Produto.cod_prod, Produto.desc_prod, Produto.preco_prod, 
+       Estoque.qtd_prod 
+FROM Estoque, Loja, Produto
+WHERE Loja.cod_loja = '1';
+
+SELECT * FROM Estoque WHERE cod_prod NOT IN (SELECT cod_prod FROM Produto);
+            
+            
